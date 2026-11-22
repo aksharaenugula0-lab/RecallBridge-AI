@@ -1,0 +1,3 @@
+My name is Alex.
+I am learning Python and Generative AI.
+My project is RecallBridge AI.
