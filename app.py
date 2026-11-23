@@ -106,7 +106,6 @@ def main():
     initialize_database()
 
     st.title("🧠 RecallBridge AI")
-
     st.markdown("### Your Personal AI Memory Assistant")
 
     st.write(
@@ -166,22 +165,18 @@ def main():
             memories = get_all_memories()
             conversations = get_conversations()
 
-            total_memories = len(memories)
-            total_conversations = len(conversations)
-
             col1, col2 = st.columns(2)
 
             with col1:
-                st.metric("Total Memories", total_memories)
+                st.metric("Total Memories", len(memories))
 
             with col2:
                 st.metric(
                     "Total Conversations",
-                    total_conversations
+                    len(conversations)
                 )
 
             st.divider()
-
             st.subheader("📂 Category-wise Memories")
 
             category_counts = {
@@ -206,11 +201,9 @@ def main():
                 category_counts[category] += 1
 
             for category, count in category_counts.items():
-
                 st.write(f"**{category}:** {count}")
 
             st.divider()
-
             st.subheader("🕒 Recent Memories")
 
             if memories:
@@ -222,11 +215,9 @@ def main():
                     )
 
             else:
-
                 st.info("No memories saved yet.")
 
         except Exception as e:
-
             st.error(f"Dashboard error: {str(e)}")
 
     # UPLOAD DOCUMENTS
@@ -258,7 +249,6 @@ def main():
                             )
 
                             chunks = save_documents(documents)
-
                             total_chunks += chunks
 
                         st.success(
@@ -266,14 +256,12 @@ def main():
                         )
 
                     except Exception as e:
-
                         st.error(f"Error: {str(e)}")
 
             else:
-
                 st.warning("Please upload a document first.")
 
-    # ADD MEMORIES WITH DUPLICATE DETECTION
+    # ADD MEMORIES
 
     elif page == "Add Memories":
 
@@ -328,10 +316,7 @@ def main():
                                 )
 
                             else:
-
-                                st.warning(
-                                    "No memory content was saved."
-                                )
+                                st.warning("No memory content was saved.")
 
                 except Exception as e:
 
@@ -381,7 +366,6 @@ def main():
                         selected_category == "All"
                         or selected_category == category
                     ):
-
                         filtered_memories.append(memory)
 
                 st.write(
@@ -447,7 +431,6 @@ def main():
                                 st.rerun()
 
                             except Exception as e:
-
                                 st.error(str(e))
 
                         if st.button(
@@ -460,11 +443,9 @@ def main():
                                 delete_memory(memory["id"])
 
                                 st.success("Memory deleted!")
-
                                 st.rerun()
 
                             except Exception as e:
-
                                 st.error(str(e))
 
             else:
@@ -524,7 +505,6 @@ def main():
                                 )
 
                     else:
-
                         st.info("No relevant memories found.")
 
                 except Exception as e:
@@ -534,7 +514,6 @@ def main():
                     )
 
             else:
-
                 st.warning("Please enter a search query.")
 
     # CHAT
@@ -544,7 +523,6 @@ def main():
         st.header("💬 Chat With Your Memories")
 
         if "current_conversation_id" not in st.session_state:
-
             st.session_state.current_conversation_id = None
 
         try:
@@ -568,7 +546,6 @@ def main():
             if pending_id in conversation_options:
 
                 st.session_state["conversation_selector"] = pending_id
-
                 st.session_state.current_conversation_id = pending_id
 
             if (
@@ -576,9 +553,7 @@ def main():
                 not in conversation_options
             ):
 
-                current_id = (
-                    st.session_state.current_conversation_id
-                )
+                current_id = st.session_state.current_conversation_id
 
                 st.session_state["conversation_selector"] = (
                     current_id
@@ -586,13 +561,9 @@ def main():
                     else "new"
                 )
 
-            if st.button(
-                "➕ New Chat",
-                key="create_new_chat"
-            ):
+            if st.button("➕ New Chat", key="create_new_chat"):
 
                 st.session_state.current_conversation_id = None
-
                 st.session_state["conversation_selector"] = "new"
 
                 st.rerun()
@@ -603,22 +574,16 @@ def main():
                 format_func=lambda chat_id:
                     "➕ New Chat"
                     if chat_id == "new"
-                    else title_lookup.get(
-                        chat_id,
-                        "Previous Chat"
-                    ),
+                    else title_lookup.get(chat_id, "Previous Chat"),
                 key="conversation_selector"
             )
 
             conversation_id = (
-                None
-                if selected_chat == "new"
+                None if selected_chat == "new"
                 else selected_chat
             )
 
-            st.session_state.current_conversation_id = (
-                conversation_id
-            )
+            st.session_state.current_conversation_id = conversation_id
 
             # RENAME AND DELETE CHAT
 
@@ -651,21 +616,14 @@ def main():
                                     new_title.strip()
                                 )
 
-                                st.success(
-                                    "Chat renamed successfully!"
-                                )
-
+                                st.success("Chat renamed successfully!")
                                 st.rerun()
 
                             except Exception as e:
-
                                 st.error(str(e))
 
                         else:
-
-                            st.warning(
-                                "Please enter a chat name."
-                            )
+                            st.warning("Please enter a chat name.")
 
                 with st.expander("🗑️ Delete Chat"):
 
@@ -683,29 +641,19 @@ def main():
 
                             try:
 
-                                delete_conversation(
-                                    conversation_id
-                                )
+                                delete_conversation(conversation_id)
 
                                 st.session_state.current_conversation_id = None
-
                                 st.session_state["conversation_selector"] = "new"
 
-                                st.success(
-                                    "Conversation deleted!"
-                                )
-
+                                st.success("Conversation deleted!")
                                 st.rerun()
 
                             except Exception as e:
-
                                 st.error(str(e))
 
                         else:
-
-                            st.warning(
-                                "Please confirm before deleting."
-                            )
+                            st.warning("Please confirm before deleting.")
 
             # DISPLAY CHAT HISTORY
 
@@ -716,14 +664,193 @@ def main():
                 for message in messages:
 
                     with st.chat_message(message["role"]):
-
                         st.markdown(message["content"])
 
             else:
-
                 st.info("Start a new conversation!")
 
+            
+            # SAVE WEB ANSWER AND ORIGINAL SOURCES
+
+            pending_answer = st.session_state.get(
+                "pending_web_answer"
+            )
+
+            pending_results = st.session_state.get(
+                "pending_web_results",
+                []
+            ) or []
+
+            pending_conversation = st.session_state.get(
+                "pending_web_answer_conversation"
+            )
+
+            if (
+                pending_answer
+                and conversation_id
+                and pending_conversation == conversation_id
+            ):
+
+                st.divider()
+                st.subheader("💾 Save Web Search Information")
+
+                st.write(
+                    "Choose what you want to save to your permanent memories."
+                )
+
+                if pending_results:
+
+                    with st.expander("🌐 View Original Web Sources"):
+
+                        for index, result in enumerate(
+                            pending_results,
+                            start=1
+                        ):
+                            st.markdown(
+                                f"**{index}. {result.get('title', 'Untitled Source')}**"
+                            )
+
+                            st.write(
+                                result.get("description", "")
+                            )
+
+                            url = result.get("url", "")
+
+                            if url:
+                                st.markdown(f"[Open Source]({url})")
+
+                            st.divider()
+
+                else:
+                    st.warning(
+                        "No original web sources were returned by the search."
+                    )
+
+                save_option = st.radio(
+                    "Select what to save:",
+                    ["AI Answer", "Web Sources", "Both"],
+                    horizontal=True,
+                    key="web_save_option"
+                )
+
+                save_category = st.selectbox(
+                    "Choose Memory Category:",
+                    MEMORY_CATEGORIES,
+                    index=2,
+                    key="web_save_category"
+                )
+
+                if st.button(
+                    "💾 Save Selected Information",
+                    key="save_web_information"
+                ):
+
+                    try:
+
+                        documents_to_save = []
+
+                        # SAVE AI ANSWER
+
+                        if save_option in ["AI Answer", "Both"]:
+
+                            if not memory_exists(pending_answer):
+
+                                documents_to_save.append(
+                                    Document(
+                                        page_content=pending_answer,
+                                        metadata={
+                                            "source": "Web Search Answer",
+                                            "category": save_category,
+                                            "memory_type": "web_search_answer"
+                                        }
+                                    )
+                                )
+
+                        # SAVE ORIGINAL WEB SOURCES
+
+                        if save_option in ["Web Sources", "Both"]:
+
+                            for result in pending_results:
+
+                                title = result.get("title", "Untitled Source")
+                                description = result.get("description", "")
+                                url = result.get("url", "")
+
+                                source_content = (
+                                    f"Title: {title}\n"
+                                    f"Description: {description}\n"
+                                    f"Source URL: {url}"
+                                )
+
+                                if description or url:
+
+                                    documents_to_save.append(
+                                        Document(
+                                            page_content=source_content,
+                                            metadata={
+                                                "source": "Web Search Source",
+                                                "category": save_category,
+                                                "memory_type": "web_search_source",
+                                                "title": title,
+                                                "url": url
+                                            }
+                                        )
+                                    )
+
+                        # SAVE TO CHROMADB
+
+                        if documents_to_save:
+
+                            with st.spinner(
+                                "Saving information to ChromaDB..."
+                            ):
+
+                                total_chunks = save_documents(
+                                    documents_to_save
+                                )
+
+                            if total_chunks > 0:
+
+                                st.success(
+                                    f"Successfully saved {total_chunks} memory chunks!"
+                                )
+
+                            else:
+
+                                st.warning(
+                                    "No information was saved."
+                                )
+
+                        else:
+
+                            st.warning(
+                                "There is no new information to save."
+                            )
+
+                        # CLEAR PENDING DATA AFTER SAVE
+
+                        st.session_state.pending_web_answer = None
+                        st.session_state.pending_web_results = []
+                        st.session_state.pending_web_answer_conversation = None
+
+                        st.rerun()
+
+                    except Exception as e:
+
+                        st.error(
+                            f"Unable to save information: {str(e)}"
+                        )
+
+
+                    except Exception as e:
+
+                        st.error(
+                            f"Unable to save information: {str(e)}"
+                        )
+
             st.divider()
+
+            # ANSWER STYLE
 
             answer_style = st.radio(
                 "Choose Answer Style:",
@@ -738,10 +865,17 @@ def main():
                 else "chat_form_new"
             )
 
+            # CHAT INPUT FORM
+
             with st.form(
                 key=form_key,
                 clear_on_submit=True
             ):
+
+                use_web = st.checkbox(
+                    "🌐 Search the Web for latest information",
+                    value=False
+                )
 
                 prompt = st.text_input(
                     "Your question:",
@@ -749,6 +883,8 @@ def main():
                 )
 
                 submitted = st.form_submit_button("Send")
+
+            # PROCESS USER QUESTION
 
             if submitted:
 
@@ -773,19 +909,67 @@ def main():
                         )
 
                         with st.spinner(
-                            "Searching your memories..."
+                            "Searching memories and the web..."
+                            if use_web
+                            else "Searching your memories..."
                         ):
 
-                            answer = ask_question(
+                            result = ask_question(
                                 prompt.strip(),
-                                answer_style
+                                answer_style,
+                                use_web=use_web
                             )
+
+                        answer = result["answer"]
+                        web_results = result["web_results"]
+
+                        # ADD SOURCE LINKS TO CHAT HISTORY
+
+                        chat_answer = answer
+
+                        if web_results:
+
+                            chat_answer += "\n\n### Web Sources\n"
+
+                            for index, source in enumerate(
+                                web_results,
+                                start=1
+                            ):
+
+                                if source["url"]:
+
+                                    chat_answer += (
+                                        f"\n{index}. "
+                                        f"[{source['title']}]"
+                                        f"({source['url']})"
+                                    )
+
+                                else:
+
+                                    chat_answer += (
+                                        f"\n{index}. {source['title']}"
+                                    )
 
                         save_message(
                             conversation_id,
                             "assistant",
-                            answer
+                            chat_answer
                         )
+
+                        # KEEP ANSWER AND SOURCES FOR SAVING
+
+                        if use_web:
+
+                            st.session_state.pending_web_answer = answer
+                            st.session_state.pending_web_results = web_results
+
+                            st.session_state.pending_web_answer_conversation = conversation_id
+
+                        else:
+
+                            st.session_state.pending_web_answer = None
+                            st.session_state.pending_web_results = []
+                            st.session_state.pending_web_answer_conversation = None
 
                         st.session_state.current_conversation_id = conversation_id
 
@@ -807,5 +991,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
